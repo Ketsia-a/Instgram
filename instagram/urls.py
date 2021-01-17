@@ -18,9 +18,6 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('instaplatform.urls')),
-    path('accounts/', include('registration.backends.simple.urls')),
+    path('',include('instaplatform.urls'))
+    # path('accounts/', include('registration.backends.simple.urls')),
 ]
-if settings.DEBUG:
-    urlpatterns+= static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
-
