@@ -1,0 +1,40 @@
+{%extends 'base.html'%} {% block content %}
+
+<div style=" background-image: linear-gradient(to right,#fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%);height: 150vh;margin-top: -2.9cm;">
+    <div class="container" style="padding-top:4%">
+
+        <div class="row">
+
+            <div class="col-md-6">
+                {% if users%}
+
+                <h5>Found {{ users|length }} user {{ users | pluralize }}</h2>
+                    {% else %}
+
+                    <h5 class="text-center"> Found 0 user with username <strong>{{message}}</strong></h5>
+
+
+                    <a class="d-block mx-auto" href="/">
+                        <button class="btn btn-sm btn-info d-block mx-auto">Back Home</button>
+                    </a>
+                    {% endif %}
+                    <hr> {% if users %} {% for person in users %}
+                    <div class="container">
+                        <div class="row">
+                            <div>
+                                <img src="{{person.profile_photo.url}}" alt="" class="rounded-circle ml-3 mt-2  mr-3" width="100" height="100">
+                            </div>
+                            <div style="padding-top: 30px; font-size: 20px;">
+                                <span><strong><a href="{% url 'usersprofile' person.user.id %}">{{person.user.username}}</a></strong></span><br>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {% endfor %} {% endif %}
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
