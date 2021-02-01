@@ -3,10 +3,9 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Profile(models.Model):
-    username = models.CharField(max_length=100, blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True, default='No bio')
-    pp = models.ImageField(upload_to='profiles/', default='a.png')
+    profile = models.ImageField(upload_to='profiles/', default='a.png')
     date = models.DateTimeField(auto_now_add=True, null=True)
 
 
@@ -23,7 +22,7 @@ class Profile(models.Model):
         self.delete()
 
     @classmethod
-    def update_profile(cls, id, value):
+    def update_user_profile(cls, id, value):
         cls.objects.filter(id = id).update(user_id = new_user)
 
     @classmethod
@@ -40,20 +39,27 @@ class Post(models.Model):
     name = models.CharField(max_length=250, blank=True)
     caption = models.CharField(max_length=250, blank=True)
     date = models.DateTimeField(auto_now_add=True, null=True)
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, null = True)
-    user = models.ForeignKey(User,on_delete=models.CASCADE,null=True)
-  
-    @classmethod
-    def get_all_images(cls):
-        images = cls.objects.all().prefetch_related('comments_set')
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE, null = True,related_name='posts')
+    likes = models.ManyToManyField(User, related_name='likes', blank=True, )
+    # @classmethod
+    # def get_all_images(cls):
+    #     images = cls.objects.all().prefetch_related('comments_set')
 
-        return images
+    #     return images
+    class Meta:
+        ordering = ["-pk"]
 
-    def save_post(self):
+    def total_likes(self):
+        return self.likes.count()
+    
+    def save_image(self):
         self.save()
 
-    def delete_post(self):
+    def delete_image(self):
         self.delete()
+    
+    def get_absolute_url(self):
+        return f"/post/{self.id}"
 
     @classmethod
     def update_caption(cls,id,caption):
@@ -63,7 +69,14 @@ class Post(models.Model):
 
     def __str__(self):
 
-        return self.caption
+        return self.name
+
+class Follow(models.Model):
+    following = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='following')
+    followers = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='followers')
+
+    def __str__(self):
+        return self.following
   
 
 class Comment(models.Model):
